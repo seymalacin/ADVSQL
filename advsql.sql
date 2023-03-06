@@ -93,6 +93,61 @@ begin
 	
 	raise notice 'Film title id 1 : %' , film_title;
 end $$ ;
+
+--********************* İÇ İÇE BLOK YAPILARI *******************
+
+do $$
+<<outher_block>>
+declare
+	counter	integer	:=0;
+begin
+	counter := counter + 1;
+	raise notice 'The current value of counter is %', counter;
 	
+	declare
+		counter integer :=0;
+	
+	begin
+		counter := counter +10 ;
+		raise notice 'Counter in the subBlock is %', counter;
+		raise notice 'Counter in the OutherBlock is %', outher_block.counter;
+	
+	end;
+	
+	raise notice 'Counter in the outherBlock is %', counter;
+	
+end outher_block $$ ;
+	
+--------------- ROW TYPE------------------------------------
+do $$
+declare
+	selected_actor	actor%rowtype;
+begin
+	select *  -- id, isim, soyisim
+	from actor
+	into selected_actor -- id,isim,soyisim
+	where id=1;
+	
+	raise notice 'The actor name is % %',
+					selected_actor.isim,
+					selected_actor.soyisim;
+end $$ ;
+  
+----------------------RECORD TYPE-----------
 
-
+/*
+		-> Row Type gibi çalışır ama record un tamamı değilde belli başlıkları almak
+		istersek kullanılabilir
+	*/
+do $$
+declare
+	rec	record; -- record data türünde rec isminde değişken oluşturuldu
+begin
+	select id,title,type
+	into rec
+	from film
+	where id = 1;
+	
+	raise notice '% % %' , rec.id, rec.title, rec.type;
+end $$ ;
+	
